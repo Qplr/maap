@@ -10,11 +10,13 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    maptile.cpp
 
 HEADERS += \
     common.h \
-    mainwindow.h
+    mainwindow.h \
+    maptile.h
 
 CONFIG += lrelease
 

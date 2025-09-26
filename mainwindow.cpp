@@ -8,13 +8,13 @@
 #include <QPixmap>
 #include <QMessageBox>
 
-void MainWindow::requestTile(const TileDef& tile)
+void MainWindow::requestCurrentTile()
 {
     QString url = "https://tile.openstreetmap.org/%1/%2/%3.png";
     url = url
-        .arg(tile.zoom())
-        .arg(tile.x())
-              .arg(tile.y());
+        .arg(currentTile.zoom())
+        .arg(currentTile.x())
+              .arg(currentTile.y());
     QNetworkRequest req(url);
     req.setRawHeader("User-Agent", "MAAP: Tile Viewer");
     netManager->get(req);
@@ -22,7 +22,14 @@ void MainWindow::requestTile(const TileDef& tile)
 
 void MainWindow::requestSelectedTile()
 {
-    requestTile(TileDef(_lon->value(), _lat->value(), _zoom->value()));
+    currentTile = TileDef(_lon->value(), _lat->value(), _zoom->value());
+    requestCurrentTile();
+}
+
+void MainWindow::newCoords(int x, int y)
+{
+    QPointF pos_deg = currentTile.pixelsToDegrees(x, y);
+    setWindowTitle(QString("%1, %2").arg(pos_deg.x()).arg(pos_deg.y()));
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -36,16 +43,21 @@ MainWindow::MainWindow(QWidget *parent)
     _lon->setValue(37.580724);
     _zoom->setValue(13);
 
+    _lat->setSingleStep(0.01);
+    _lon->setSingleStep(0.01);
+
     _lat->setRange(-90, 90);
     _lon->setRange(-180, 180);
     _zoom->setRange(0, 18);
 
-    _lon->setDecimals(5);
+    _lat->setDecimals(5);
     _lon->setDecimals(5);
 
-    _tile = new QLabel();
-    _tile->setFixedHeight(256);
-    _tile->setFixedWidth(256);
+    _tile = new MapTile();
+    _tile->setFixedHeight(TILE_SIZE);
+    _tile->setFixedWidth(TILE_SIZE);
+    _tile->setMouseTracking(true);
+    connect(_tile, &MapTile::coords, this, &MainWindow::newCoords);
 
     QGridLayout* layout = new QGridLayout;
     layout->addWidget(_tile, 0, 0, 1, 3);
