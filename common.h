@@ -45,7 +45,7 @@ public:
         double n = M_PI - 2.0 * M_PI * (_y + float(y) / TILE_SIZE) / (double)(1 << _zoom);
         float retx = (_x + float(x) / TILE_SIZE) / (double)(1 << _zoom) * 360.0 - 180;
         float rety = 180.0 / M_PI * atan(0.5 * (exp(n) - exp(-n)));
-        return QPointF(rety, retx);
+        return QPointF(retx, rety);
     }
 };
 

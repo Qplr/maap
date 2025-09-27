@@ -26,6 +26,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 private slots:
+    QString WGS84(QPointF pos_deg);
+    QString UTM(QPointF pos_deg);
     void requestCurrentTile();
     void requestSelectedTile();
 public slots:
